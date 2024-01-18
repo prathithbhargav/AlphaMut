@@ -1,0 +1,4 @@
+validation_structures/*
+validation_results/*
+saved_models/*
+*.ipynb_checkpoints/
