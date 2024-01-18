@@ -1,4 +1,5 @@
-validation_structures/*
-validation_results/*
-saved_models/*
+validation_structures/*.pdb
+validation_results/*.csv
+validation_results/*.pkl
+saved_models/*.pth
 *.ipynb_checkpoints/
