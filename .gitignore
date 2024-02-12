@@ -4,3 +4,4 @@ validation_results/*.pkl
 saved_models/*.pth
 *.ipynb_checkpoints/
 validation_structures/*
+validation_results/*
