@@ -2,8 +2,9 @@
 import numpy as np
 import biovec
 import glob
-# from utils functions
-from utils.encoder_decoder import *
+
+
+from utils.encoder_decoder_no_proline import *
 from utils.sequence import *
 from utils.reward import *
 # for deep learning
@@ -37,9 +38,7 @@ import time
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-
-
-class PeptideEvolution(Env):
+class PeptideEvolutionNoProline(Env):
     '''
     This is to modify the class to make it compatible with the biovec embedding. 
     '''
@@ -51,6 +50,7 @@ class PeptideEvolution(Env):
                  unique_path_to_give_for_file,
                  maximum_number_of_allowed_mutations_per_episode=15,
                  validation=False):
+
             
         # selecting the initial pdb file
         list_of_initial_pdb_files = os.listdir(folder_containing_pdb_files)
@@ -66,7 +66,7 @@ class PeptideEvolution(Env):
         self.tool_to_generate_structures = structure_generator
         self.folder_of_initial_pdb_structures = folder_containing_pdb_files
         self.length = length
-        self.no_of_amino_acid = 20
+        self.no_of_amino_acid = 19
         self.folder_for_training = folder_containing_pdb_files
         self.action_space = Discrete(self.length*self.no_of_amino_acid)
         self.observation_space =Box(low=-np.inf, high=np.inf, shape=(100,), dtype=np.float32)

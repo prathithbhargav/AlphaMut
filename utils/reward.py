@@ -1,6 +1,6 @@
 import os
 from utils.sequence import *
-from utils.encoder_decoder import *
+# from utils.encoder_decoder import *
 # from modeller import *
 # from modeller.automodel import *
 from Bio.SVDSuperimposer import SVDSuperimposer
