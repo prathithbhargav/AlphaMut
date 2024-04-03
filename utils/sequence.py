@@ -4,14 +4,6 @@
 this file is meant to store all the functions meant for mutating the giving the protein 
 '''
 from biopandas.pdb import PandasPdb
-import numpy as np
-import random
-import pandas as pd
-
-
-
-
-
 
 
 def pdb2df(file_path):
@@ -64,24 +56,6 @@ def pdb2df(file_path):
 
 
 
-def pdb2fasta(PDBFile):
-    '''
-    this function takes in a PDB file and outputs a FASTA format file
-
-    Parameters
-    ----------
-    PDBDFile : str
-        file path of the input file in PDB format.
-    '''
-    with open(PDBFile, 'r') as pdb_file:
-        for record in SeqIO.parse(pdb_file, 'pdb-atom'):
-            print('>' + record.id)
-            print(record.seq)
-
-
-
-
-
 def sequence_df(protein_df):
     '''
     takes in the protein DataFrame and outputs a DataFrame containing only residue_number and residue_id
@@ -109,30 +83,6 @@ def df2sequence(pdb_df):
     sequence = ''.join(pdb_df['residue_id'])
     return sequence
 
-
-
-
-def biased_coin_toss(p_heads):
-    '''
-    returns a boolean value based on a input probability of heads.
-
-    Parameters
-    ----------
-    p_heads : float
-        input the desired probability of heads
-    '''
-    random_number = random.random()  # Generate a random number between 0 and 1
-
-    if random_number < p_heads:
-        return True  # Heads
-    else:
-        return False  # Tails
-
-
-
-
-
-
 def read_pdb_file(file_path):
     '''
     takes in a pdb file and gives back the sequence in string format 
@@ -141,8 +91,5 @@ def read_pdb_file(file_path):
     input_string = df2sequence(sequence_df(pdb2df(file_path)))
     result_string = ''.join(char for char in input_string if char not in chars_to_remove)
     return result_string
-
-
-
 
 

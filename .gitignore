@@ -5,3 +5,5 @@ saved_models/*.pth
 *.ipynb_checkpoints/
 validation_structures/*
 validation_results/*
+validation_results
+saved_models

@@ -1,35 +1,36 @@
+# helix-breaker
 #  README 
-This code is meant to run the code for breaking alpha helices in proteins using reinforcement learning. 
+This code is meant to run the code for learning how to break helices using Reinforcement Learning. 
+
+Information on implementation is described in the Jupyter Notebook - `Training_and_Validation.ipynb`
 
 ##  Packages Required
 
-It is advised to install all of the below packages in a conda environment. Please install the conda environment from the ESM Fold Repository. This will install pytorch 1.x version as well. 
+It is advised to install all of the below packages in a conda environment(>= python 3.8). It is advised to use StableBaselines3 since it has standard ready-to-use implementations of RL Algorithms.  
 
-- [Farama Gymnasium](https://github.com/Farama-Foundation/Gymnasium) - this is to construct the RL environment
-- [BioVec](https://github.com/kyu999/biovec/tree/master) - this is to embedd the states
+The following packages are required:
+
+- [BioVec](https://github.com/kyu999/biovec/tree/master) - this is to embed the states
 - [Biotite](https://www.biotite-python.org/) - this is to get protein structural embeddings to obtain the reward
-- [ESMFold](https://github.com/facebookresearch/esm) - this is to obtain the peptide structure from sequence
+- [Transformers](https://huggingface.co/transformers/v3.5.1/installation.html) - this is to get the ESMFold Model and the ESM embedding model. 
 - [biopandas](https://biopandas.github.io/biopandas/tutorials/Working_with_PDB_Structures_in_DataFrames/) - this is to read the initial pdb files. 
 
 The reinforcement learning environment is described below:
 
 ## Reinforcement Learning Environment
 ### States
-The states are described as protein sequences that are embedded in a 100 dimensional space using a pretrained model called ProtVec[^1]. This is implemented in the file `utils/encoder_decoder.py`. The module that I use for this is biovec, implemented in this  [GitHub Repo](https://github.com/kyu999/biovec/tree/master). Please make sure to pay attention to [this issue](https://github.com/kyu999/biovec/issues/15#issuecomment-1543044407). 
+The states are described as protein sequences that are embedded in a 100 dimensional space using a pretrained model called ProtVec[^1]. The other way to get the state is through the ESM-2 model, that gives us a 320 dimensional space. This is implemented in the file `utils/encoder_decoder.py`. The module that I use for this is biovec, implemented in this  [GitHub Repo](https://github.com/kyu999/biovec/tree/master). Please make sure to pay attention to [this issue](https://github.com/kyu999/biovec/issues/15#issuecomment-1543044407). If you're using the esm model, there should be no issues related to installation since esm is implemented in transformers. 
 
 ### Actions 
-Actions are single point mutations. Based on the kinds of mutations possible, I classify my model into two - **Proline** and **No Proline** Model. I do this since Proline is a known helix breaker and the **Proline** model has shown Mode collapse. Each of these models can be trained separately. While the **Proline** model can be trained using `Training.ipynb`, use `Training_No_Proline.ipynb` to train the **No Proline** model. Per episode, upto 15 mutations are allowed. 
+Actions are single point mutations. Based on the kinds of mutations possible, I classify my model into two - **Proline** and **No Proline** Model. I do this since Proline is a known helix breaker and the **Proline** model has shown Mode collapse. Each of these models can be trained, by using the flag `use_proline` while creating the reinforcement learning environment. 
 
 ### Rewards
-Post mutation, we generate secondary structure of the protein using a tool called ESMFold[^4]. Download it through [this GitHub Repository](https://github.com/facebookresearch/esm). ESMFold (atleast from this implementation) requires cuda 10.2. An alternative implementation is as part of the HuggingFace  Transformers library, although that is not used in my code. 
-The main determinant for the reward is the alpha helical percentage, which I define as the percentage of amino acids that are part of a alpha helix in the peptide. If the model creates peptides that have this percent < threshold, it is awarded a positive reward of +10 and the episode ends.If not, the agent is penalised with a negative reward of -0.01 with each mutations. If the number of mutations = 15 and the threshold is still not met it gets a large negative reward of -25. We use the P-SEA algorithm[^2] to get the alpha helical percentage. To use this, please download [Biotite documentation — Biotite 0.39.0 documentation (biotite-python.org)](https://www.biotite-python.org/).  
+Post mutation, we generate secondary structure of the protein using a tool called ESMFold[^4]. This is implemented using Hugging Face Transformers library. The main determinant for the reward is the helical percentage, which I define as the percentage of amino acids that are part of a alpha helix in the peptide. If the model creates peptides that have this percent < threshold, it is awarded a positive reward of +10 and the episode ends.If not, the agent is penalised with a negative reward of -0.01 with each mutations. If the number of mutations = 15 and the threshold is still not met it gets a large negative reward of -25. We use the P-SEA algorithm[^2] to get the helical percentage. To use this, please download [Biotite documentation — Biotite 0.39.0 documentation (biotite-python.org)](https://www.biotite-python.org/).  
 
 
 ## RL algorithm
-I use the REINFORCE algorithm[^3] with Entropy Regularisation. The algorithm is given as follows:
-$$
-\nabla_\theta = \log \nabla_\theta G(\tau) \mathbb{E}(\tau) - \sum p_i \log p_i
-$$
+
+Different RL Algorithms can be used, from Stable Baselines3 implementations. As a proof of concept, it is shown for Proximal Policy Optimisation in the notebook `Training_and_Validation.ipynb`
 
 
 
