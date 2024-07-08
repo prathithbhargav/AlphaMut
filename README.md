@@ -1,8 +1,9 @@
 # helix-breaker
 #  README 
 This code is meant to run the code for learning how to break helices using Reinforcement Learning. 
+There are two models --- one that disrupts helices, and another that disrupts helices within a protein environment. 
 
-Information on implementation is described in the Jupyter Notebook - `Training_and_Validation.ipynb`
+Information on implementation is described in the Jupyter Notebooks - `1_training_and_validation_only_helix.ipynb` and `2_training_and_validation_with_protein.ipynb`
 
 ##  Packages Required
 
@@ -14,7 +15,7 @@ The following packages are required:
 - [Biotite](https://www.biotite-python.org/) - this is to get protein structural embeddings to obtain the reward
 - [Transformers](https://huggingface.co/transformers/v3.5.1/installation.html) - this is to get the ESMFold Model and the ESM embedding model. 
 - [biopandas](https://biopandas.github.io/biopandas/tutorials/Working_with_PDB_Structures_in_DataFrames/) - this is to read the initial pdb files. 
-
+- [StableBaselines3](https://stable-baselines3.readthedocs.io/en/master/) for the RL algorithms.  
 The reinforcement learning environment is described below:
 
 ## Reinforcement Learning Environment
