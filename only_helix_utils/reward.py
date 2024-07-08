@@ -4,7 +4,7 @@ from transformers.models.esm.openfold_utils.protein import to_pdb, Protein as OF
 from transformers.models.esm.openfold_utils.feats import atom14_to_atom37
 from datetime import datetime
 import os
-from utils.sequence import *
+from only_helix_utils.sequence import *
 import biotite.structure as struc
 import biotite.structure.io as strucio
 import numpy as np

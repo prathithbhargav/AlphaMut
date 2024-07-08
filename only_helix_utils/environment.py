@@ -1,8 +1,8 @@
 import torch
 import numpy as np
-from utils.encoder_decoder import *
-from utils.sequence import *
-from utils.reward import *
+from only_helix_utils.encoder_decoder import *
+from only_helix_utils.sequence import *
+from only_helix_utils.reward import *
 from gymnasium import Env
 from gymnasium.spaces import Discrete
 from gymnasium.spaces import Box
@@ -145,5 +145,7 @@ class PeptideEvolution(Env):
         initial_pdb_path = self.path_of_template_pdb_file
         self.state = convert_sequence_to_embeddings(read_pdb_file(initial_pdb_path),embedding_type=self.sequence_encoding_type)
         self.number_of_mutations = 0
+        self.dummy_state_for_mutator = protein_to_indices(read_pdb_file(initial_pdb_path))
         info = {}
         return self.state, info
+
