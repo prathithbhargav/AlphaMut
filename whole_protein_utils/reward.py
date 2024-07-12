@@ -76,7 +76,7 @@ def percentage_of_secondary_structure(arr,secondary_structure_type,starting_resi
     # this will count the number of amino acids that are part of a helix.
     # print(starting_residue,ending_residue)
     # print(len(arr))
-    arr = arr[starting_residue-1:ending_residue] 
+    arr = arr[starting_residue:ending_residue+1] 
     # print(arr)
     count_a = np.count_nonzero(arr == 'a')
     total_elements = len(arr)
