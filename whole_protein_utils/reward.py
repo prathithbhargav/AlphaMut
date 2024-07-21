@@ -11,8 +11,10 @@ import numpy as np
 
 # DEFINING THE MODEL FOR PROTEIN MODELLING
 torch.backends.cuda.matmul.allow_tf32 = True
-tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1",local_files_only=True)
-model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1",local_files_only=True)
+
+# this might sometimes give an error on a HPC. then use the flag - local_files_only = True inside the from_pretrained method. 
+tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
+model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1")
 model = model.cuda()
 def convert_outputs_to_pdb(outputs):
     final_atom_positions = atom14_to_atom37(outputs["positions"][-1], outputs)
