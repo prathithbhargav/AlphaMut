@@ -1,5 +1,5 @@
 import numpy as np
-import biovec
+# import biovec
 from transformers import AutoTokenizer,EsmModel
 import torch
 
@@ -54,10 +54,10 @@ def convert_sequence_to_embeddings(sequence,embedding_type):
     -------
     numpy array or torch tensor
     '''
-    if embedding_type == 'biovec':
-        trained_model_biovec = biovec.models.load_protvec(model_fname='swissprot-reviewed-protvec.model')
-        predicted_biovec_embeddings= trained_model_biovec.to_vecs(sequence)
-        return np.mean(predicted_biovec_embeddings,axis=0)
+    # if embedding_type == 'biovec':
+    #     trained_model_biovec = biovec.models.load_protvec(model_fname='swissprot-reviewed-protvec.model')
+    #     predicted_biovec_embeddings= trained_model_biovec.to_vecs(sequence)
+    #     return np.mean(predicted_biovec_embeddings,axis=0)
     
     if embedding_type == 'esm':
         inputs = esm_seq_tokenizer(sequence, return_tensors="pt")
