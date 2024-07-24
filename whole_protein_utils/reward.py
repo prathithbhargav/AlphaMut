@@ -4,6 +4,7 @@ from transformers.models.esm.openfold_utils.protein import to_pdb, Protein as OF
 from transformers.models.esm.openfold_utils.feats import atom14_to_atom37
 from datetime import datetime
 import os
+from biopandas.pdb import PandasPdb
 from whole_protein_utils.sequence import *
 import biotite.structure as struc
 import biotite.structure.io as strucio
@@ -11,10 +12,8 @@ import numpy as np
 
 # DEFINING THE MODEL FOR PROTEIN MODELLING
 torch.backends.cuda.matmul.allow_tf32 = True
-
-# this might sometimes give an error on a HPC. then use the flag - local_files_only = True inside the from_pretrained method. 
-tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
-model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1")
+tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1",local_files_only=True)
+model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1",local_files_only=True)
 model = model.cuda()
 def convert_outputs_to_pdb(outputs):
     final_atom_positions = atom14_to_atom37(outputs["positions"][-1], outputs)
@@ -105,16 +104,37 @@ def give_time_as_string():
     # Format the current time as a string without spaces
     time_str = current_time.strftime("%Y-%m-%d_%H:%M:%S")
     return time_str
-    
-def get_reward_from_result(result_got, cutoff):
+
+def plddt_value_of_helical_residues(structure_path,
+                                    starting_residue,
+                                    ending_residue):
+    ppdb = PandasPdb().read_pdb(structure_path)
+    df = ppdb.df['ATOM']
+    condition = (df['residue_number']>=starting_residue+1) & (df['residue_number']<=ending_residue+1)
+    df = df[condition] # getting the rows corresponding to the interesting helix
+    average_b_factors = df.groupby('residue_number')['b_factor'].mean().reset_index()
+    threshold = 0.7 # this cutoff is chosen based on alphafold website
+    fraction_with_acceptable_plddt = len(average_b_factors[average_b_factors['b_factor']>= threshold])/len(average_b_factors)
+    return fraction_with_acceptable_plddt
+
+
+
+def get_reward_from_result(result_got, result_plddt,cutoff,usage_of_plddt):
     '''
     The reason I have made this separate is cause I can make it modular. It takes in a reward cutoff and gives back the reward, 
     after looking at the result, which is the percentage content of the secondary structure. 
     '''
-    if result_got < cutoff:
-        return 10
-    else:
-        return -0.01
+    if usage_of_plddt == True:
+        if result_got >=cutoff and result_plddt >= cutoff: # only if both plddt and helical content is greater than threshold. 
+            return -0.01
+        else:
+            return 10
+    
+    if usage_of_plddt == False:
+        if result_got < cutoff:
+            return 10
+        else:
+            return -0.01
     
 def reward_function(template_protein_structure_path,
                     protein_sequence,
@@ -124,7 +144,8 @@ def reward_function(template_protein_structure_path,
                     ending_residue_id,
                     secondary_structure_type_from_env ='helix',
                     validation=False,
-                    folder_to_save_validation_files=None
+                    folder_to_save_validation_files=None,
+                    use_plddt = False
                     ):
     '''
     MODIFIED
@@ -136,8 +157,11 @@ def reward_function(template_protein_structure_path,
         result = percentage_of_secondary_structure(get_structural_annotations(path_of_the_newly_created_file),
                                                    secondary_structure_type=secondary_structure_type_from_env,
                                                   starting_residue = starting_residue_id,
-                                                  ending_residue = ending_residue_id) # here the starting and ending residues are also taken into account. 
-        reward = get_reward_from_result(result_got=result,cutoff=reward_cutoff)
+                                                  ending_residue = ending_residue_id) # here the starting and ending residues are also taken into account.
+        result_from_plddt = plddt_value_of_helical_residues(structure_path = path_of_the_newly_created_file,
+                                                            starting_residue = starting_residue_id,
+                                                                ending_residue = ending_residue_id) 
+        reward = get_reward_from_result(result_got=result,result_plddt=result_from_plddt,cutoff=reward_cutoff,usage_of_plddt=use_plddt)
         os.remove(path_of_the_newly_created_file)
         return reward
 
@@ -151,9 +175,12 @@ def reward_function(template_protein_structure_path,
         path_of_the_newly_created_file = f'{base_path_to_give_for_file}.pdb'
         result = percentage_of_secondary_structure(get_structural_annotations(path_of_the_newly_created_file),
                                                    secondary_structure_type=secondary_structure_type_from_env,
-                                                   starting_residue = starting_residue_id,
-                                                   ending_residue = ending_residue_id)
-        reward = get_reward_from_result(result_got=result,cutoff=reward_cutoff)
+                                                  starting_residue = starting_residue_id,
+                                                  ending_residue = ending_residue_id) # here the starting and ending residues are also taken into account.
+        result_from_plddt = plddt_value_of_helical_residues(structure_path = path_of_the_newly_created_file,
+                                                            starting_residue = starting_residue_id,
+                                                                ending_residue = ending_residue_id) # this is to obtain the fraction of residues that have a plddt >= 0.7 
+        reward = get_reward_from_result(result_got=result,result_plddt=result_from_plddt,cutoff=reward_cutoff,usage_of_plddt=use_plddt)
         if int(reward)<10:
             os.remove(path_of_the_newly_created_file)
         return reward
