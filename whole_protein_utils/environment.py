@@ -26,7 +26,8 @@ class ProteinEvolution(Env):
                  secondary_structure_to_disrupt='helix',
                  maximum_number_of_allowed_mutations_per_episode=15,
                  validation=False,
-                use_proline=True):
+                use_proline=True,
+                use_plddt_in_reward = False):
         '''
         This part initialises the environment - give the arguements such as what is the corpus of structures that you'd like to train on,
         reward cutoff, maximum number of mutations allowed per episode, unique path to give for training file, etc. 
@@ -74,7 +75,7 @@ class ProteinEvolution(Env):
         # to get the new state for mutator 
         self.dummy_state_for_mutator = protein_to_indices(self.initial_helix_sequence)
         # to get the initial state
-        
+        self.use_plddt_in_reward_calculation = use_plddt_in_reward
 
         # @TODO needs to be modified. 
         # initialising the number of mutations
@@ -123,7 +124,8 @@ class ProteinEvolution(Env):
                                     ending_residue_id = self.ending_residue_in_protein,
                                     secondary_structure_type_from_env =self.secondary_structure_to_disrupt,
                                     validation=False,
-                                    folder_to_save_validation_files=None)
+                                    folder_to_save_validation_files=None,
+                                    use_plddt=self.use_plddt_in_reward_calculation)
             
         if self.use_environment_for_validation == True:
             reward = reward_function(template_protein_structure_path=self.path_of_template_pdb_file,
@@ -134,7 +136,8 @@ class ProteinEvolution(Env):
                                     ending_residue_id = self.ending_residue_in_protein,
                                     secondary_structure_type_from_env =self.secondary_structure_to_disrupt,
                                     validation=True,
-                                    folder_to_save_validation_files=self.folder_to_save_validation_files)
+                                    folder_to_save_validation_files=self.folder_to_save_validation_files,
+                                    use_plddt=self.use_plddt_in_reward_calculation)
 
         if reward != 10 and self.number_of_mutations < self.maximum_number_of_allowed_mutations_per_episode:
             actual_reward = reward
