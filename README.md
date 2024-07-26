@@ -1,4 +1,5 @@
 # helix-breaker
+![alt text](images_documentation/only_helix_environment.png)
 #  README 
 This code is meant to run the code for learning how to break helices using Reinforcement Learning. 
 There are two models --- one that disrupts helices, and another that disrupts helices within a protein environment. 
@@ -19,6 +20,7 @@ The following packages are required:
 The reinforcement learning environment is described below:
 
 ## Reinforcement Learning Environment
+
 ### States
 The states are described as protein sequences that are embedded in a 100 dimensional space using a pretrained model called ProtVec[^1]. The other way to get the state is through the ESM-2 model, that gives us a 320 dimensional space. This is implemented in the file `utils/encoder_decoder.py`. The module that I use for this is biovec, implemented in this  [GitHub Repo](https://github.com/kyu999/biovec/tree/master). Please make sure to pay attention to [this issue](https://github.com/kyu999/biovec/issues/15#issuecomment-1543044407). If you're using the esm model, there should be no issues related to installation since esm is implemented in transformers. 
 
