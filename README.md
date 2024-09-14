@@ -7,7 +7,7 @@ suggest helix disrupting mutations"
 
 ## Running the Inference Model
 
-To run the trained model(Helix-in-protein), you can run the colab notebook - 3_inference_of_Helix-in-protein_trained_model.ipynb. Instructions are provided in the colab notebook along with an illustrative example. 
+To run the trained model(Helix-in-protein), you can run the colab notebook - `3_inference_of_Helix-in-protein_trained_model.ipynb`. Instructions are provided in the colab notebook along with an illustrative example. 
 
 
 ## Training the Model
