@@ -1,8 +1,8 @@
 import torch
 import numpy as np
-from whole_protein_utils.encoder_decoder import *
-from whole_protein_utils.sequence import *
-from whole_protein_utils.reward import *
+from Helix_in_protein.encoder_decoder import *
+from Helix_in_protein.sequence import *
+from Helix_in_protein.reward import *
 from gymnasium import Env
 from gymnasium.spaces import Discrete
 from gymnasium.spaces import Box

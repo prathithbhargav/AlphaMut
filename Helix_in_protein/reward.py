@@ -5,15 +5,15 @@ from transformers.models.esm.openfold_utils.feats import atom14_to_atom37
 from datetime import datetime
 import os
 from biopandas.pdb import PandasPdb
-from whole_protein_utils.sequence import *
+from Helix_in_protein.sequence import *
 import biotite.structure as struc
 import biotite.structure.io as strucio
 import numpy as np
 
 # DEFINING THE MODEL FOR PROTEIN MODELLING
 torch.backends.cuda.matmul.allow_tf32 = True
-tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1",local_files_only=True)
-model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1",local_files_only=True)
+tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
+model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1")
 model = model.cuda()
 def convert_outputs_to_pdb(outputs):
     final_atom_positions = atom14_to_atom37(outputs["positions"][-1], outputs)
