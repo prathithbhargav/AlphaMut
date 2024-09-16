@@ -174,7 +174,7 @@ class ProteinEvolution(Env):
         self.entire_initial_protein_sequence =  self.row_of_template_sequence['whole_protein_sequence'].values[0]
         self.starting_residue_in_protein = self.row_of_template_sequence['starting_residue'].values[0]
         self.ending_residue_in_protein = self.row_of_template_sequence['ending_residue'].values[0]
-        print(self.starting_residue_in_protein)
+        #print(self.starting_residue_in_protein)
         self.pre_helix_of_protein = self.entire_initial_protein_sequence[:self.starting_residue_in_protein]
         self.post_helix_of_protein = self.entire_initial_protein_sequence[self.ending_residue_in_protein+1:]
         self.initial_helix_sequence = self.row_of_template_sequence['Seq'].values[0]
