@@ -1,7 +1,7 @@
 # AlphaMut
 
 This is the GitHub Repository accompanying the paper: "AlphaMut: a deep reinforcement learning model to
-suggest helix disrupting mutations" 
+suggest helix-disrupting mutations" 
 
 #  README 
 
